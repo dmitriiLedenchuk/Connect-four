@@ -1,1 +1,131 @@
+ROW_COUNT = 6
+COLUMN_COUNT = 7
+
+
+## Creating the board
+def create_board():
+    return [[0 for _ in range(7)] for _ in range(6)]
+
+
+## Checking if move is valid
+def is_valid_location(board, column):
+    # Check if top row of column is empty
+    return board[ROW_COUNT - 1][column] == 0
+
+
+## Finding next open row
+def get_next_open_row(board, column):
+    for r in range(ROW_COUNT):
+        if board[r][column] == 0:
+            return r
+
+
+## Dropping piece into board
+def drop_piece(board, row, column, piece):
+    board[row][column] = piece
+
+
+## Checking for horizontal wins
+def check_horizontal_win(board, piece):
+    for r in range(ROW_COUNT):
+        for c in range(COLUMN_COUNT - 3):
+            if (board[r][c] == piece and
+                    board[r][c + 1] == piece and
+                    board[r][c + 2] == piece and
+                    board[r][c + 3] == piece):
+                return True
+    return False
+
+
+## Checking for vertical wins
+def check_vertical_win(board, piece):
+    for c in range(COLUMN_COUNT):
+        for r in range(ROW_COUNT - 3):
+            if (board[r][c] == piece and
+                    board[r + 1][c] == piece and
+                    board[r + 2][c] == piece and
+                    board[r + 3][c] == piece):
+                return True
+    return False
+
+
+## Checking for positive diagonal wins (/)
+def check_positive_diagonal(board, piece):
+    for r in range(ROW_COUNT - 3):
+        for c in range(COLUMN_COUNT - 3):
+            if (board[r][c] == piece and
+                    board[r + 1][c + 1] == piece and
+                    board[r + 2][c + 2] == piece and
+                    board[r + 3][c + 3] == piece):
+                return True
+    return False
+
+
+## Checking for negative diagonal wins (\)
+def check_negative_diagonal(board, piece):
+    for r in range(3, ROW_COUNT):
+        for c in range(COLUMN_COUNT - 3):
+            if (board[r][c] == piece and
+                    board[r - 1][c + 1] == piece and
+                    board[r - 2][c + 2] == piece and
+                    board[r - 3][c + 3] == piece):
+                return True
+    return False
+
+
+## Main win checking function
+def winning_move(board, piece):
+    # Check all win conditions
+    if check_horizontal_win(board, piece):
+        return True
+    if check_vertical_win(board, piece):
+        return True
+    if check_positive_diagonal(board, piece):
+        return True
+    if check_negative_diagonal(board, piece):
+        return True
+    return False
+
+
+## Check if board is full (draw)
+def is_board_full(board):
+    for c in range(COLUMN_COUNT):
+        if board[ROW_COUNT - 1][c] == 0:
+            return False
+    return True
+
+
+# Testing
+if __name__ == "__main__":
+    print("Testing game logic functions...")
+
+    # Test board creation
+    board = create_board()
+    print("Board created:")
+    for row in board:
+        print(row)
+
+    # Test dropping pieces
+    print("\nDropping piece in column 3...")
+    if is_valid_location(board, 3):
+        row = get_next_open_row(board, 3)
+        drop_piece(board, row, 3, 1)
+    for row in board:
+        print(row)
+
+    # Test horizontal win
+    print("\nTesting horizontal win...")
+    test_board = create_board()
+    for i in range(4):
+        drop_piece(test_board, 0, i, 1)
+    print("Horizontal win:", winning_move(test_board, 1))
+
+    # Test vertical win
+    print("\nTesting vertical win...")
+    test_board2 = create_board()
+    for i in range(4):
+        drop_piece(test_board2, i, 0, 2)
+    print("Vertical win:", winning_move(test_board2, 2))
+
+    print("\nTests complete!")
 
